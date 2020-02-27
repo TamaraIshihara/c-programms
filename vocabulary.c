@@ -107,12 +107,46 @@ void write(char *filename, struct voc *v )
 
 void find(char *filename, struct voc *v)
 {
+	new_file = fopen(filename, "a+");
+	
 	char *key;
+	char *file;
+	int check;
+	
 	key = malloc(CHAR_SIZE);
+	file = malloc(CHAR_SIZE);
+	
 	printf("Введите ключ: ");
 	scanf("%99s", key);
 	
+	printf("\n--------------------------------\n");
 	
-	
-	
+	while (1)
+    {
+        if (fgets(file, 99, new_file)) 
+        {
+        	if (strstr(file, key)) 
+        	{
+        		printf ("     %s", file);
+        		check = 1;
+        	}
+        	
+        } 
+        else 
+        {
+        	break;
+        }
+
+    }
+    
+    
+    if (check != 1)
+    {
+    	printf("Совпадений не найдено\n");
+    }
+    
+    check = 0;
+    
+    printf("--------------------------------\n\n");
+	fclose(new_file);
 }
