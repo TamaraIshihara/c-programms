@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+
 #define CHAR_SIZE 100 
 
 struct voc {
@@ -14,6 +15,8 @@ struct voc {
 FILE *new_file;
 void write(char *filename, struct voc *v);
 void find(char *filename, struct voc *v);
+void sort(char *filename, struct voc *v);
+void section(char *filename, struct voc *v);
 
 int main(int argc, char* argv[] )
 {	
@@ -59,6 +62,7 @@ int main(int argc, char* argv[] )
 			case 1:
 				write(filename, v);
 				menu = 0;
+				
 				break;
 			
 			case 2:
@@ -66,7 +70,9 @@ int main(int argc, char* argv[] )
 				break;
 					
 			case 3:
-				exit(0);
+				//sort(filename, v);
+				section (filename, v);
+				//exit(0);
 				
 			default:
 				exit(0);
@@ -81,27 +87,55 @@ int main(int argc, char* argv[] )
 	return 0;
 }
 
-
 void write(char *filename, struct voc *v )
 {
-	new_file = fopen(filename, "a+");
+	char *ans;
+	char chk_ans1[2] = "Y";
+	char chk_ans2[2] = "y";
+	int result1, result2;
 	
-	if (feof(new_file) == 0)
+	ans = malloc(CHAR_SIZE);
+	
+	printf("Сделать новую запись в файл? [y/n]\n");
+	scanf("%2s", ans);
+	printf("%s", ans);
+	
+	result1 = strcmp(ans, chk_ans1); 
+	result2 = strcmp(ans, chk_ans2);
+	
+	while (result1 == 0 || result2 == 0 )
 	{
+		new_file = fopen(filename, "a+");
+		
+		if (feof(new_file) == 0)
+		{
+			feof(new_file);
+		}
+		
+		printf("Введите слово: ");
+		scanf("%99s", v->word);
+		fprintf(new_file, "%s - ", v->word);
+		
+		printf("Введите перевод: ");
+		scanf("%99s", v->str);
+		fprintf(new_file, "%s\n", v->str);
+		
 		feof(new_file);
+		
+		memset(ans,'0', 1);
+		
+		printf("Сделать еще одну запись? [y/n]\n");
+		scanf("%2s", ans);
+		
+		result1 = strcmp(ans, chk_ans1); 
+		result2 = strcmp(ans, chk_ans2);
+	
 	}
 	
-	printf("Введите слово: ");
-	scanf("%99s", v->word);
-	fprintf(new_file, "%s - ", v->word);
-	
-	printf("Введите перевод: ");
-	scanf("%99s", v->str);
-	fprintf(new_file, "%s\n", v->str);
-	
-	feof(new_file);
-	
+	free(ans);
 	fclose(new_file);
+	
+	
 	
 }
 
@@ -149,4 +183,45 @@ void find(char *filename, struct voc *v)
     
     printf("--------------------------------\n\n");
 	fclose(new_file);
+}
+
+void sort (char *filename, struct voc *v)
+{
+	char *strings;
+	char *file;
+	int count = 0;
+	char *text;
+
+	char mass[count];
+
+	strings = malloc(CHAR_SIZE);
+	file = malloc(CHAR_SIZE);
+	
+	new_file = fopen(filename, "a+");
+	
+	while(feof(new_file) == 0)
+	{
+		fgets(file, 99, new_file);
+		
+		
+		if(feof(new_file))
+			{
+				break;
+			}
+		
+		printf("%s", file);
+		count++;
+	}
+	//N = count;
+	
+	//printf("%d\n", count);
+	
+	fclose(new_file);
+	
+	
+}
+
+void section (char *filename, struct voc *v)
+{
+
 }
