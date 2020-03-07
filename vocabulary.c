@@ -15,8 +15,25 @@ struct voc {
 FILE *new_file;
 void write(char *filename, struct voc *v);
 void find(char *filename, struct voc *v);
-void sort(char *filename, struct voc *v);
-void section(char *filename, struct voc *v);
+void sort(char *filename);
+static int compare(const void *up, const void *down)
+{
+	const struct voc *v_up = (const struct voc *)up;
+	const struct voc *v_down = (const struct voc *)down;
+	
+	int result = strcmp(v_up->word, v_down->word);
+	
+	if(result <0)
+	{
+		return -1;
+	}
+	else if(result >0)
+	{
+		return 1;
+	}
+	
+	return 0;
+}
 
 int main(int argc, char* argv[] )
 {	
@@ -70,8 +87,7 @@ int main(int argc, char* argv[] )
 				break;
 					
 			case 3:
-				//sort(filename, v);
-				section (filename, v);
+				sort(filename);
 				//exit(0);
 				
 			default:
@@ -182,19 +198,24 @@ void find(char *filename, struct voc *v)
     check = 0;
     
     printf("--------------------------------\n\n");
+    free(key);
+    free(file);
 	fclose(new_file);
 }
 
-void sort (char *filename, struct voc *v)
+void sort (char *filename)
 {
-	char *strings;
 	char *file;
 	int count = 0;
 	char *text;
+	
+	struct voc *v = NULL;
+	int max_voc_count = 10;
+	size_t size_voc = sizeof(struct voc);
+	
+	v = malloc(max_voc_count * size_voc);
+	
 
-	char mass[count];
-
-	strings = malloc(CHAR_SIZE);
 	file = malloc(CHAR_SIZE);
 	
 	new_file = fopen(filename, "a+");
@@ -205,23 +226,54 @@ void sort (char *filename, struct voc *v)
 		
 		
 		if(feof(new_file))
-			{
-				break;
-			}
+		{
+			break;
+		}
 		
-		printf("%s", file);
+		char *str1 = malloc(CHAR_SIZE);
+		char *str2 = malloc(CHAR_SIZE);
+		
+		if(sscanf(file, "%s - %s", str1, str2) == 2)
+		{
+			if (count >= max_voc_count)
+			{
+				max_voc_count = max_voc_count * 2;
+				v = realloc(v, max_voc_count * size_voc);
+			}
+			
+			v[count].word = str1;
+			v[count].str = str2;
+		}
+		else
+		{
+			printf("ERROR\n");
+			free(str1);
+			free(str2);
+		}
+		
+		//printf("%s", file);
 		count++;
 	}
-	//N = count;
+	if (count < max_voc_count)
+	{
+		v = realloc(v, count * size_voc);
+	}
 	
-	//printf("%d\n", count);
+	for(int i = 0; i <count; i++)
+	{
+		printf("%s == %s\n", v[i].word, v[i].str);
+	}
 	
+	qsort(v, count, size_voc, compare); //
+	printf("s_____________________________________________s\n");
+	
+	for(int i = 0; i <count; i++)
+	{
+		printf("%s == %s\n", v[i].word, v[i].str);
+	}
+	
+	free(file);
 	fclose(new_file);
 	
 	
-}
-
-void section (char *filename, struct voc *v)
-{
-
 }
